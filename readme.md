@@ -90,7 +90,7 @@ miss.pipe(read, write, function (err) {
 ```
 ### condition
 
-##### `miss.condition(condition,  stream [, elseStream])`
+##### `miss.condition(condition, stream, [elseStream])`
 
 Pipes streams together and destroys all of them if one of them closes. Calls `cb` with `(error)` if there was an error in any of the streams.
 
