@@ -4,6 +4,10 @@ This module was inspired from [mississippi](https://github.com/maxogden/mississi
 
 ## usage
 
+```bash
+npm install mississippi2 --save
+```
+
 ```js
 var miss = require('mississippi2')
 ```
