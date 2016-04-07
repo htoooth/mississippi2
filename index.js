@@ -21,7 +21,7 @@ module.exports.toJSON = require("stream-to-json")
 module.exports.to = require('flush-write-stream')
 module.exports.toArray = require("stream-to-array")
 module.exports.toString = require("stream-to-string")
-module.exports.toPromise = require("stream-to-promise")
+module.exports.toPromise = require("stream-to-promise2")
 
 module.exports.from = require('from2')
 module.exports.fromArray = require('stream-from-array')

@@ -1,6 +1,6 @@
 {
   "name": "mississippi2",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "a collection of useful streams",
   "main": "index.js",
   "scripts": {
@@ -27,7 +27,7 @@
     "stream-from-value": "^0.1.0",
     "stream-to-array": "^2.3.0",
     "stream-to-json": "0.0.1",
-    "stream-to-promise": "^1.1.0",
+    "stream-to-promise2": "^1.2.0",
     "stream-to-string": "^1.0.1",
     "streaming-json-stringify": "^3.1.0",
     "ternary-stream": "^2.0.0",
