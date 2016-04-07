@@ -1,6 +1,6 @@
 # mississippi2
 
-This module is inspired from [mississippi](https://github.com/maxogden/mississippi).
+This module was inspired from [mississippi](https://github.com/maxogden/mississippi).
 
 ## usage
 
@@ -11,20 +11,20 @@ var miss = require('mississippi2')
 ## methods
 
 - [pipe](#pipe)
-- [merge](#merge)
-- [condition](#condition)
+- [merge](#merge) *
+- [condition](#condition) *
 - [each](#each)
-- [map](#map)
-- [filter](#filter)
-- [reduce](#reduce)
-- [split](#split)
-- [spy](#spy)
+- [map](#map) *
+- [filter](#filter) *
+- [reduce](#reduce) *
+- [split](#split) *
+- [spy](#spy) *
 - [pipeline](#pipeline)
 - [duplex](#duplex)
 - [through](#through)
 - [from](#from)
-- [fromString](#fromString)
-- [fromArray](#fromArray)
+- [fromString](#fromString) *
+- [fromArray](#fromArray) *
 - [to](#to)
 - [concat](#concat)
 - [finished](#finished)
