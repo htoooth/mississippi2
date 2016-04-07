@@ -1,6 +1,6 @@
 # mississippi
 
-a collection of useful stream utility modules. learn how the modules work using this and then pick the ones you want and use them individually
+a collection of useful stream utility modules. learn how the modules work using this and then pick the ones you want and use them individually.
 
 the goal of the modules included in mississippi is to make working with streams easy without sacrificing speed, error handling or composability.
 
@@ -13,6 +13,8 @@ var miss = require('mississippi')
 ## methods
 
 - [pipe](#pipe)
+- [merge](#merge)
+- [condition](#condition)
 - [each](#each)
 - [map](#map)
 - [filter](#filter)
@@ -42,6 +44,65 @@ When using standard `source.pipe(destination)` the source will _not_ be destroye
 #### original module
 
 `miss.pipe` is provided by [`require('pump')`](https://npmjs.org/pump)
+
+#### example
+
+```js
+// lets do a simple file copy
+var fs = require('fs')
+
+var read = fs.createReadStream('./original.zip')
+var write = fs.createWriteStream('./copy.zip')
+
+// use miss.pipe instead of read.pipe(write)
+miss.pipe(read, write, function (err) {
+  if (err) return console.error('Copy error!', err)
+  console.log('Copied successfully')
+})
+```
+
+### merge
+
+##### `miss.merge([[streams], options])`
+
+Pipes streams together and destroys all of them if one of them closes. Calls `cb` with `(error)` if there was an error in any of the streams.
+
+When using standard `source.pipe(destination)` the source will _not_ be destroyed if the destination emits close or error. You are also not able to provide a callback to tell when the pipe has finished.
+
+`miss.pipe` does these two things for you, ensuring you handle stream errors 100% of the time (unhandled errors are probably the most common bug in most node streams code)
+
+#### original module
+
+`miss.merge` is provided by [`require('multi-duplex-stream')`](https://github.com/emilbayes/multi-duplex-stream)
+
+#### example
+
+```js
+// lets do a simple file copy
+var fs = require('fs')
+
+var read = fs.createReadStream('./original.zip')
+var write = fs.createWriteStream('./copy.zip')
+
+// use miss.pipe instead of read.pipe(write)
+miss.pipe(read, write, function (err) {
+  if (err) return console.error('Copy error!', err)
+  console.log('Copied successfully')
+})
+```
+### condition
+
+##### `miss.condition(condition,  stream [, elseStream])`
+
+Pipes streams together and destroys all of them if one of them closes. Calls `cb` with `(error)` if there was an error in any of the streams.
+
+When using standard `source.pipe(destination)` the source will _not_ be destroyed if the destination emits close or error. You are also not able to provide a callback to tell when the pipe has finished.
+
+`miss.pipe` does these two things for you, ensuring you handle stream errors 100% of the time (unhandled errors are probably the most common bug in most node streams code)
+
+#### original module
+
+`miss.condition` is provided by [`require('ternary-stream')`](https://github.com/robrich/ternary-stream)
 
 #### example
 
@@ -96,7 +157,7 @@ function done (err) {
 
 ### map
 
-##### `miss.map(mapFunction)`
+##### `miss.map(mapper)`
 
 Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
 
@@ -128,7 +189,7 @@ miss.pipe(read, split(), toInt, write, function (err) {
 ```
 ### filter
 
-##### `miss.filter(filterFunction)`
+##### `miss.filter(predicate)`
 
 Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
 
@@ -136,14 +197,14 @@ If any of the streams in the pipeline emits an error or gets destroyed, or you d
 
 #### original module
 
-`miss.map` is provided by [`require('through2-map')`](https://github.com/brycebaril/through2-map)
+`miss.filter` is provided by [`require('through2-filter')`](https://github.com/brycebaril/through2-filter)
 
 #### example
 
 ```js
 var split = require('split2')
 
-var toInt = miss.map(function (chunk) {
+var toInt = miss.filter(function (chunk) {
   return parseInt(chunk.toString());
 })
 
@@ -161,7 +222,7 @@ miss.pipe(read, split(), toInt, write, function (err) {
 
 ### reduce
 
-##### `miss.reduce(reduceFunction)`
+##### `miss.reduce(accumulator)`
 
 Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
 
@@ -169,7 +230,7 @@ If any of the streams in the pipeline emits an error or gets destroyed, or you d
 
 #### original module
 
-`miss.map` is provided by [`require('through2-map')`](https://github.com/brycebaril/through2-map)
+`miss.reduce` is provided by [`require('through2-reduce')`](https://github.com/brycebaril/through2-reduce)
 
 #### example
 
@@ -193,7 +254,7 @@ miss.pipe(read, split(), toInt, write, function (err) {
 ```
 ### split
 
-##### `miss.split(reduceFunction)`
+##### `miss.split(matcher, mapper, options)`
 
 Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
 
@@ -201,7 +262,7 @@ If any of the streams in the pipeline emits an error or gets destroyed, or you d
 
 #### original module
 
-`miss.map` is provided by [`require('through2-map')`](https://github.com/brycebaril/through2-map)
+`miss.split` is provided by [`require('split2')`](https://github.com/mcollina/split2)
 
 #### example
 
@@ -226,7 +287,7 @@ miss.pipe(read, split(), toInt, write, function (err) {
 
 ### spy 
 
-##### `miss.spy(reduceFunction)`
+##### `miss.spy(spy)`
 
 Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
 
@@ -234,7 +295,7 @@ If any of the streams in the pipeline emits an error or gets destroyed, or you d
 
 #### original module
 
-`miss.map` is provided by [`require('through2-map')`](https://github.com/brycebaril/through2-map)
+`miss.spy` is provided by [`require('through2-spy')`](https://github.com/brycebaril/through2-spy)
 
 #### example
 
