@@ -17,6 +17,8 @@ var miss = require('mississippi')
 - [map](#map)
 - [filter](#filter)
 - [reduce](#reduce)
+- [split](#split)
+- [spy](#spy)
 - [pipeline](#pipeline)
 - [duplex](#duplex)
 - [through](#through)
@@ -24,8 +26,6 @@ var miss = require('mississippi')
 - [fromString](#fromString)
 - [fromArray](#fromArray)
 - [to](#to)
-- [split](#split)
-- [spy](#spy)
 - [concat](#concat)
 - [finished](#finished)
 
@@ -191,7 +191,71 @@ miss.pipe(read, split(), toInt, write, function (err) {
   console.log('String processed successfully')
 })
 ```
+### split
 
+##### `miss.split(reduceFunction)`
+
+Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
+
+If any of the streams in the pipeline emits an error or gets destroyed, or you destroy the stream it returns, all of the streams will be destroyed and cleaned up for you.
+
+#### original module
+
+`miss.map` is provided by [`require('through2-map')`](https://github.com/brycebaril/through2-map)
+
+#### example
+
+```js
+var split = require('split2')
+
+var toInt = miss.map(function (chunk) {
+  return parseInt(chunk.toString());
+})
+
+// use it like any other transform stream
+var fs = require('fs')
+
+var read = fs.createReadStream('strings.txt')
+var write = fs.createWriteStream('numbers.txt')
+
+miss.pipe(read, split(), toInt, write, function (err) {
+  if (err) return console.error('String processing error!', err)
+  console.log('String processed successfully')
+})
+```
+
+### spy 
+
+##### `miss.spy(reduceFunction)`
+
+Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
+
+If any of the streams in the pipeline emits an error or gets destroyed, or you destroy the stream it returns, all of the streams will be destroyed and cleaned up for you.
+
+#### original module
+
+`miss.map` is provided by [`require('through2-map')`](https://github.com/brycebaril/through2-map)
+
+#### example
+
+```js
+var split = require('split2')
+
+var toInt = miss.map(function (chunk) {
+  return parseInt(chunk.toString());
+})
+
+// use it like any other transform stream
+var fs = require('fs')
+
+var read = fs.createReadStream('strings.txt')
+var write = fs.createWriteStream('numbers.txt')
+
+miss.pipe(read, split(), toInt, write, function (err) {
+  if (err) return console.error('String processing error!', err)
+  console.log('String processed successfully')
+})
+```
 
 ### pipeline
 
