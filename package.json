@@ -10,6 +10,7 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "concat-stream": "^1.5.0",
+    "duplex-child-process": "0.0.5",
     "duplexify": "^3.4.2",
     "end-of-stream": "^1.1.0",
     "flush-write-stream": "^1.0.0",
@@ -21,13 +22,21 @@
     "split2": "^2.0.1",
     "stream-array": "^1.1.1",
     "stream-each": "^1.1.0",
-    "string-to-stream": "^1.0.1",
+    "stream-from-array": "^0.1.0",
+    "stream-from-promise": "^1.0.0",
+    "stream-from-value": "^0.1.0",
+    "stream-to-array": "^2.3.0",
+    "stream-to-json": "0.0.1",
+    "stream-to-promise": "^1.1.0",
+    "stream-to-string": "^1.0.1",
+    "streaming-json-stringify": "^3.1.0",
     "ternary-stream": "^2.0.0",
     "through2": "^2.0.0",
     "through2-filter": "^2.0.0",
     "through2-map": "^2.0.0",
     "through2-reduce": "^1.1.1",
-    "through2-spy": "^2.0.0"
+    "through2-spy": "^2.0.0",
+    "unique-hash-stream": "^1.0.0"
   },
   "devDependencies": {},
   "repository": {

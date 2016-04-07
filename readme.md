@@ -23,10 +23,18 @@ var miss = require('mississippi2')
 - [duplex](#duplex)
 - [through](#through)
 - [from](#from)
-- [fromString](#fromString) *
+- [fromValue](#fromString) *
 - [fromArray](#fromArray) *
+- [fromPromise](#fromPromise) *
 - [to](#to)
+- [toString](#toString) *
+- [toArray](#toArray) *
+- [toPromise](#toPromise) *
 - [concat](#concat)
+- [unique](#unique) *
+- [toJson](#toJson) *
+- [stringify](#stringify) *
+- [child](#child) *
 - [finished](#finished)
 
 ### pipe
@@ -88,6 +96,7 @@ miss.pipe(read, write, function (err) {
   console.log('Copied successfully')
 })
 ```
+
 ### condition
 
 ##### `miss.condition(condition, stream, [elseStream])`
@@ -252,7 +261,7 @@ miss.pipe(read, split(), toInt, write, function (err) {
 ```
 ### split
 
-##### `miss.split(matcher, mapper, options)`
+##### `miss.split([matcher, mapper, options])`
 
 Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
 
@@ -463,9 +472,9 @@ function fromString(string) {
 fromString('hello world').pipe(process.stdout)
 ```
 
-### fromString
+### fromValue
 
-#####`miss.fromString(String)`
+#####`miss.fromValue(value)`
 
 Make a custom [readable stream](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable).
 
@@ -478,13 +487,11 @@ Returns a readable stream that calls `read(size, next)` when data is requested f
 
 #### original module
 
-`miss.fromString` is provided by [`require('string-to-stream')`](https://github.com/feross/string-to-stream)
+`miss.fromValue` is provided by [`require('stream-from-value')`](https://github.com/schnittstabil/stream-from-value)
 
 #### example
 
 ```js
-
-
 function fromString(string) {
   return miss.from(function(size, next) {
     // if there's no more content
@@ -521,7 +528,7 @@ Returns a readable stream that calls `read(size, next)` when data is requested f
 
 #### original module
 
-`miss.fromArray` is provided by [`require('stream-array')`](https://github.com/mimetnet/node-stream-array)
+`miss.fromArray` is provided by [`require('stream-from-array')`](https://github.com/schnittstabil/stream-from-array)
 
 #### example
 
@@ -638,6 +645,86 @@ function handleError(err) {
   console.error(err) // print the error to STDERR
   process.exit(1) // exit program with non-zero exit code
 }
+```
+
+### toJSON
+
+#####`miss.toJSON(stream, callback)`
+
+Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+
+This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+
+#### original module
+
+`miss.toJSON` is provided by [`require('stream-to-json')`](https://www.npmjs.com/package/stream-to-json)
+
+#### example
+
+```js
+var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+```
+
+
+### stringify
+
+#####`miss.stringify([options])`
+
+Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+
+This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+
+#### original module
+
+`miss.stringify` is provided by [`require('streaming-json-stringify')`](https://github.com/stream-utils/streaming-json-stringify)
+
+#### example
+
+```js
+var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+```
+
+
+### child
+
+#####`miss.child(command, [args], [options])`
+
+Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+
+This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+
+#### original module
+
+`miss.child` is provided by [`require('duplex-child-process')`](https://github.com/stream-utils/duplex-child-process)
+
+#### example
+
+```js
+var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
 ```
 
 ### finished
