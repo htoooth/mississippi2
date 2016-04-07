@@ -1044,9 +1044,10 @@ body .markdown-body
 <li><a href="#toPromise">toPromise</a> *</li>
 <li><a href="#concat">concat</a></li>
 <li><a href="#unique">unique</a> *</li>
-<li><a href="#finished">finished</a></li>
-<li><a href="#toJson">toJson</a> *</li>
+<li><a href="#toJSON">toJSON</a> *</li>
 <li><a href="#stringify">stringify</a> *</li>
+<li><a href="#child">child</a> *</li>
+<li><a href="#finished">finished</a></li>
 </ul>
 <h3 id="pipe"><a name="user-content-pipe" href="#pipe" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>pipe</h3>
 <h5 id="misspipestream1-stream2-stream3-cb"><code>miss.pipe(stream1, stream2, stream3, ..., cb)</code></h5>
@@ -1375,7 +1376,7 @@ function fromString(string) {
 fromString('hello world').pipe(process.stdout)
 </code></pre>
 
-<h3 id="fromstring"><a name="user-content-fromstring" href="#fromstring" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>fromString</h3>
+<h3 id="fromvalue"><a name="user-content-fromvalue" href="#fromvalue" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>fromValue</h3>
 <h5 id="missfromvaluevalue"><code>miss.fromValue(value)</code></h5>
 <p>Make a custom <a href="https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable">readable stream</a>.</p>
 <p><code>opts</code> contains the options to pass on to the ReadableStream constructor e.g. for creating a readable object stream (or use the shortcut <code>miss.from.obj([...])</code>).</p>
@@ -1385,11 +1386,9 @@ fromString('hello world').pipe(process.stdout)
 <li><code>next(err, chunk)</code> should be called when you&rsquo;re ready to emit more data.</li>
 </ul>
 <h4 id="original-module_13"><a name="user-content-original-module_13" href="#original-module_13" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
-<p><code>miss.fromValue</code> is provided by <a href="https://github.com/feross/string-to-stream"><code>require('stream-to-string')</code></a></p>
+<p><code>miss.fromValue</code> is provided by <a href="https://github.com/schnittstabil/stream-from-value"><code>require('stream-from-value')</code></a></p>
 <h4 id="example_13"><a name="user-content-example_13" href="#example_13" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
-<pre><code class="js">
-
-function fromString(string) {
+<pre><code class="js">function fromString(string) {
   return miss.from(function(size, next) {
     // if there's no more content
     // left in the string, close the stream.
@@ -1420,8 +1419,43 @@ fromString('hello world').pipe(process.stdout)
 <li><code>next(err, chunk)</code> should be called when you&rsquo;re ready to emit more data.</li>
 </ul>
 <h4 id="original-module_14"><a name="user-content-original-module_14" href="#original-module_14" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
-<p><code>miss.fromArray</code> is provided by <a href="https://github.com/mimetnet/node-stream-array"><code>require('stream-array')</code></a></p>
+<p><code>miss.fromArray</code> is provided by <a href="https://github.com/schnittstabil/stream-from-array"><code>require('stream-from-array')</code></a></p>
 <h4 id="example_14"><a name="user-content-example_14" href="#example_14" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
+<pre><code class="js">
+
+function fromString(string) {
+  return miss.from(function(size, next) {
+    // if there's no more content
+    // left in the string, close the stream.
+    if (string.length &lt;= 0) return next(null, null)
+
+    // Pull in a new chunk of text,
+    // removing it from the string.
+    var chunk = string.slice(0, size)
+    string = string.slice(size)
+
+    // Emit &quot;chunk&quot; from the stream.
+    next(null, chunk)
+  })
+}
+
+// pipe &quot;hello world&quot; out
+// to stdout.
+fromString('hello world').pipe(process.stdout)
+</code></pre>
+
+<h3 id="frompromise"><a name="user-content-frompromise" href="#frompromise" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>fromPromise</h3>
+<h5 id="missfrompromisepromise"><code>miss.fromPromise(promise)</code></h5>
+<p>Make a custom <a href="https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable">readable stream</a>.</p>
+<p><code>opts</code> contains the options to pass on to the ReadableStream constructor e.g. for creating a readable object stream (or use the shortcut <code>miss.from.obj([...])</code>).</p>
+<p>Returns a readable stream that calls <code>read(size, next)</code> when data is requested from the stream.</p>
+<ul>
+<li><code>size</code> is the recommended amount of data (in bytes) to retrieve.</li>
+<li><code>next(err, chunk)</code> should be called when you&rsquo;re ready to emit more data.</li>
+</ul>
+<h4 id="original-module_15"><a name="user-content-original-module_15" href="#original-module_15" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
+<p><code>miss.fromPromise</code> is provided by <a href="https://github.com/schnittstabil/stream-from-promise"><code>require('stream-from-promise')</code></a></p>
+<h4 id="example_15"><a name="user-content-example_15" href="#example_15" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
 <pre><code class="js">
 
 function fromString(string) {
@@ -1456,9 +1490,9 @@ fromString('hello world').pipe(process.stdout)
 <li><code>next(err, chunk)</code> should be called when you&rsquo;re ready to write more data, or encountered an error.</li>
 </ul>
 <p><code>flush(cb)</code> is called before <code>finish</code> is emitted and allows for cleanup steps to occur.</p>
-<h4 id="original-module_15"><a name="user-content-original-module_15" href="#original-module_15" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
+<h4 id="original-module_16"><a name="user-content-original-module_16" href="#original-module_16" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
 <p><code>miss.to</code> is provided by <a href="https://npmjs.org/flush-write-stream"><code>require('flush-write-stream')</code></a></p>
-<h4 id="example_15"><a name="user-content-example_15" href="#example_15" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
+<h4 id="example_16"><a name="user-content-example_16" href="#example_16" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
 <pre><code class="js">var ws = miss.to(write, flush)
 
 ws.on('finish', function () {
@@ -1488,14 +1522,68 @@ writing world
 finished
 </code></pre>
 
+<h3 id="tostring"><a name="user-content-tostring" href="#tostring" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>toString</h3>
+<h5 id="misstostringstream-callback"><code>miss.toString(stream [, callback])</code></h5>
+<p>Waits for <code>stream</code> to finish or error and then calls <code>cb</code> with <code>(err)</code>. <code>cb</code> will only be called once. <code>err</code> will be null if the stream finished without error, or else it will be populated with the error from the streams <code>error</code> event.</p>
+<p>This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It&rsquo;s used internally <code>miss.pipe</code>.</p>
+<h4 id="original-module_17"><a name="user-content-original-module_17" href="#original-module_17" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
+<p><code>miss.toString</code> is provided by <a href="https://github.com/jasonpincin/stream-to-string"><code>require('stream-to-string')</code></a></p>
+<h4 id="example_17"><a name="user-content-example_17" href="#example_17" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
+<pre><code class="js">var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+</code></pre>
+
+<h3 id="toarray"><a name="user-content-toarray" href="#toarray" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>toArray</h3>
+<h5 id="misstoarraystream-callbackerr-arr"><code>miss.toArray([stream], [callback(err, arr)])</code></h5>
+<p>Waits for <code>stream</code> to finish or error and then calls <code>cb</code> with <code>(err)</code>. <code>cb</code> will only be called once. <code>err</code> will be null if the stream finished without error, or else it will be populated with the error from the streams <code>error</code> event.</p>
+<p>This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It&rsquo;s used internally <code>miss.pipe</code>.</p>
+<h4 id="original-module_18"><a name="user-content-original-module_18" href="#original-module_18" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
+<p><code>miss.toArray</code> is provided by <a href="https://github.com/stream-utils/stream-to-array"><code>require('stream-to-array')</code></a></p>
+<h4 id="example_18"><a name="user-content-example_18" href="#example_18" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
+<pre><code class="js">var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+</code></pre>
+
+<h3 id="topromise"><a name="user-content-topromise" href="#topromise" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>toPromise</h3>
+<h5 id="misstopromisestream"><code>miss.toPromise(stream)</code></h5>
+<p>Waits for <code>stream</code> to finish or error and then calls <code>cb</code> with <code>(err)</code>. <code>cb</code> will only be called once. <code>err</code> will be null if the stream finished without error, or else it will be populated with the error from the streams <code>error</code> event.</p>
+<p>This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It&rsquo;s used internally <code>miss.pipe</code>.</p>
+<h4 id="original-module_19"><a name="user-content-original-module_19" href="#original-module_19" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
+<p><code>miss.toPromise</code> is provided by <a href="https://github.com/bendrucker/stream-to-promise"><code>require('stream-to-promise')</code></a></p>
+<h4 id="example_19"><a name="user-content-example_19" href="#example_19" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
+<pre><code class="js">var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+</code></pre>
+
 <h3 id="concat"><a name="user-content-concat" href="#concat" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>concat</h3>
 <h5 id="var-concat-missconcatcb"><code>var concat = miss.concat(cb)</code></h5>
 <p>Returns a writable stream that concatenates all data written to the stream and calls a callback with the single result.</p>
 <p>Calling <code>miss.concat(cb)</code> returns a writable stream. <code>cb</code> is called when the writable stream is finished, e.g. when all data is done being written to it. <code>cb</code> is called with a single argument, <code>(data)</code>, which will containe the result of concatenating all the data written to the stream.</p>
 <p>Note that <code>miss.concat</code> will not handle stream errors for you. To handle errors, use <code>miss.pipe</code> or handle the <code>error</code> event manually.</p>
-<h4 id="original-module_16"><a name="user-content-original-module_16" href="#original-module_16" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
+<h4 id="original-module_20"><a name="user-content-original-module_20" href="#original-module_20" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
 <p><code>miss.concat</code> is provided by <a href="https://npmjs.org/concat-stream"><code>require('concat-stream')</code></a></p>
-<h4 id="example_16"><a name="user-content-example_16" href="#example_16" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
+<h4 id="example_20"><a name="user-content-example_20" href="#example_20" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
 <pre><code class="js">var fs = require('fs')
 var concat = require('concat-stream')
 
@@ -1516,13 +1604,85 @@ function handleError(err) {
 }
 </code></pre>
 
+<h3 id="unique"><a name="user-content-unique" href="#unique" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>unique</h3>
+<h5 id="missuniquestream-callback"><code>miss.unique(stream, callback)</code></h5>
+<p>Waits for <code>stream</code> to finish or error and then calls <code>cb</code> with <code>(err)</code>. <code>cb</code> will only be called once. <code>err</code> will be null if the stream finished without error, or else it will be populated with the error from the streams <code>error</code> event.</p>
+<p>This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It&rsquo;s used internally <code>miss.pipe</code>.</p>
+<h4 id="original-module_21"><a name="user-content-original-module_21" href="#original-module_21" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
+<p><code>miss.unique</code> is provided by <a href="https://github.com/stream-utils/unique-hash-stream"><code>require('unique-hash-stream')</code></a></p>
+<h4 id="example_21"><a name="user-content-example_21" href="#example_21" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
+<pre><code class="js">var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+</code></pre>
+
+<h3 id="tojson"><a name="user-content-tojson" href="#tojson" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>toJSON</h3>
+<h5 id="misstojsonstream-callback"><code>miss.toJSON(stream, callback)</code></h5>
+<p>Waits for <code>stream</code> to finish or error and then calls <code>cb</code> with <code>(err)</code>. <code>cb</code> will only be called once. <code>err</code> will be null if the stream finished without error, or else it will be populated with the error from the streams <code>error</code> event.</p>
+<p>This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It&rsquo;s used internally <code>miss.pipe</code>.</p>
+<h4 id="original-module_22"><a name="user-content-original-module_22" href="#original-module_22" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
+<p><code>miss.toJSON</code> is provided by <a href="https://www.npmjs.com/package/stream-to-json"><code>require('stream-to-json')</code></a></p>
+<h4 id="example_22"><a name="user-content-example_22" href="#example_22" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
+<pre><code class="js">var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+</code></pre>
+
+<h3 id="stringify"><a name="user-content-stringify" href="#stringify" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>stringify</h3>
+<h5 id="missstringifyoptions"><code>miss.stringify([options])</code></h5>
+<p>Waits for <code>stream</code> to finish or error and then calls <code>cb</code> with <code>(err)</code>. <code>cb</code> will only be called once. <code>err</code> will be null if the stream finished without error, or else it will be populated with the error from the streams <code>error</code> event.</p>
+<p>This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It&rsquo;s used internally <code>miss.pipe</code>.</p>
+<h4 id="original-module_23"><a name="user-content-original-module_23" href="#original-module_23" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
+<p><code>miss.stringify</code> is provided by <a href="https://github.com/stream-utils/streaming-json-stringify"><code>require('streaming-json-stringify')</code></a></p>
+<h4 id="example_23"><a name="user-content-example_23" href="#example_23" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
+<pre><code class="js">var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+</code></pre>
+
+<h3 id="child"><a name="user-content-child" href="#child" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>child</h3>
+<h5 id="misschildcommand-args-options"><code>miss.child(command, [args], [options])</code></h5>
+<p>Waits for <code>stream</code> to finish or error and then calls <code>cb</code> with <code>(err)</code>. <code>cb</code> will only be called once. <code>err</code> will be null if the stream finished without error, or else it will be populated with the error from the streams <code>error</code> event.</p>
+<p>This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It&rsquo;s used internally <code>miss.pipe</code>.</p>
+<h4 id="original-module_24"><a name="user-content-original-module_24" href="#original-module_24" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
+<p><code>miss.child</code> is provided by <a href="https://github.com/stream-utils/duplex-child-process"><code>require('duplex-child-process')</code></a></p>
+<h4 id="example_24"><a name="user-content-example_24" href="#example_24" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
+<pre><code class="js">var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+</code></pre>
+
 <h3 id="finished"><a name="user-content-finished" href="#finished" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>finished</h3>
 <h5 id="missfinishedstream-cb"><code>miss.finished(stream, cb)</code></h5>
 <p>Waits for <code>stream</code> to finish or error and then calls <code>cb</code> with <code>(err)</code>. <code>cb</code> will only be called once. <code>err</code> will be null if the stream finished without error, or else it will be populated with the error from the streams <code>error</code> event.</p>
 <p>This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It&rsquo;s used internally <code>miss.pipe</code>.</p>
-<h4 id="original-module_17"><a name="user-content-original-module_17" href="#original-module_17" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
+<h4 id="original-module_25"><a name="user-content-original-module_25" href="#original-module_25" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
 <p><code>miss.finished</code> is provided by <a href="https://npmjs.org/end-of-stream"><code>require('end-of-stream')</code></a></p>
-<h4 id="example_17"><a name="user-content-example_17" href="#example_17" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
+<h4 id="example_25"><a name="user-content-example_25" href="#example_25" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
 <pre><code class="js">var copySource = fs.createReadStream('./movie.mp4')
 var copyDest = fs.createWriteStream('./movie-copy.mp4')
 

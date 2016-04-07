@@ -32,7 +32,7 @@ var miss = require('mississippi2')
 - [toPromise](#toPromise) *
 - [concat](#concat)
 - [unique](#unique) *
-- [toJson](#toJson) *
+- [toJSON](#toJSON) *
 - [stringify](#stringify) *
 - [child](#child) *
 - [finished](#finished)
@@ -556,6 +556,50 @@ function fromString(string) {
 fromString('hello world').pipe(process.stdout)
 ```
 
+### fromPromise
+
+#####`miss.fromPromise(promise)`
+
+Make a custom [readable stream](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable).
+
+`opts` contains the options to pass on to the ReadableStream constructor e.g. for creating a readable object stream (or use the shortcut `miss.from.obj([...])`).
+
+Returns a readable stream that calls `read(size, next)` when data is requested from the stream.
+
+- `size` is the recommended amount of data (in bytes) to retrieve.
+- `next(err, chunk)` should be called when you're ready to emit more data.
+
+#### original module
+
+`miss.fromPromise` is provided by [`require('stream-from-promise')`](https://github.com/schnittstabil/stream-from-promise)
+
+#### example
+
+```js
+
+
+function fromString(string) {
+  return miss.from(function(size, next) {
+    // if there's no more content
+    // left in the string, close the stream.
+    if (string.length <= 0) return next(null, null)
+
+    // Pull in a new chunk of text,
+    // removing it from the string.
+    var chunk = string.slice(0, size)
+    string = string.slice(size)
+
+    // Emit "chunk" from the stream.
+    next(null, chunk)
+  })
+}
+
+// pipe "hello world" out
+// to stdout.
+fromString('hello world').pipe(process.stdout)
+```
+
+
 ### to
 
 #####`miss.to([options], write, [flush])`
@@ -610,6 +654,86 @@ writing world
 finished
 ```
 
+### toString
+
+#####`miss.toString(stream [, callback])`
+
+Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+
+This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+
+#### original module
+
+`miss.toString` is provided by [`require('stream-to-string')`](https://github.com/jasonpincin/stream-to-string)
+
+#### example
+
+```js
+var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+```
+
+### toArray
+
+#####`miss.toArray([stream], [callback(err, arr)])`
+
+Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+
+This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+
+#### original module
+
+`miss.toArray` is provided by [`require('stream-to-array')`](https://github.com/stream-utils/stream-to-array)
+
+#### example
+
+```js
+var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+```
+
+### toPromise
+
+#####`miss.toPromise(stream)`
+
+Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+
+This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+
+#### original module
+
+`miss.toPromise` is provided by [`require('stream-to-promise')`](https://github.com/bendrucker/stream-to-promise)
+
+#### example
+
+```js
+var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+```
+
+
+
 ### concat
 
 #####`var concat = miss.concat(cb)`
@@ -646,6 +770,33 @@ function handleError(err) {
   process.exit(1) // exit program with non-zero exit code
 }
 ```
+
+### unique
+
+#####`miss.unique(stream, callback)`
+
+Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+
+This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+
+#### original module
+
+`miss.unique` is provided by [`require('unique-hash-stream')`](https://github.com/stream-utils/unique-hash-stream)
+
+#### example
+
+```js
+var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+```
+
 
 ### toJSON
 
