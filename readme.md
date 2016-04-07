@@ -1,13 +1,11 @@
-# mississippi
+# mississippi2
 
-a collection of useful stream utility modules. learn how the modules work using this and then pick the ones you want and use them individually.
-
-the goal of the modules included in mississippi is to make working with streams easy without sacrificing speed, error handling or composability.
+This module inspired from [mississippi](https://github.com/maxogden/mississippi).
 
 ## usage
 
 ```js
-var miss = require('mississippi')
+var miss = require('mississippi2')
 ```
 
 ## methods
@@ -63,7 +61,7 @@ miss.pipe(read, write, function (err) {
 
 ### merge
 
-##### `miss.merge([[streams], options])`
+##### `miss.merge(streams [, options])`
 
 Pipes streams together and destroys all of them if one of them closes. Calls `cb` with `(error)` if there was an error in any of the streams.
 
@@ -669,3 +667,4 @@ miss.finished(copyDest, function(err) {
   console.log('write success')
 })
 ```
+

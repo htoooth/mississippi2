@@ -1,6 +1,6 @@
 {
-  "name": "mississippi",
-  "version": "1.2.0",
+  "name": "mississippi2",
+  "version": "0.0.1",
   "description": "a collection of useful streams",
   "main": "index.js",
   "scripts": {
@@ -32,10 +32,10 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maxogden/mississippi.git"
+    "url": "git+https://github.com/htoooth/mississippi2.git"
   },
   "bugs": {
-    "url": "https://github.com/maxogden/mississippi/issues"
+    "url": "https://github.com/htoooth/mississippi2/issues"
   },
-  "homepage": "https://github.com/maxogden/mississippi#readme"
+  "homepage": "https://github.com/htoooth/mississippi2#readme"
 }
