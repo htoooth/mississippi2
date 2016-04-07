@@ -1,6 +1,6 @@
 # mississippi2
 
-This module inspired from [mississippi](https://github.com/maxogden/mississippi).
+This module is inspired from [mississippi](https://github.com/maxogden/mississippi).
 
 ## usage
 
@@ -61,7 +61,7 @@ miss.pipe(read, write, function (err) {
 
 ### merge
 
-##### `miss.merge(streams [, options])`
+##### `miss.merge(streams, [options])`
 
 Pipes streams together and destroys all of them if one of them closes. Calls `cb` with `(error)` if there was an error in any of the streams.
 
@@ -478,7 +478,7 @@ Returns a readable stream that calls `read(size, next)` when data is requested f
 
 #### original module
 
-`miss.from` is provided by [`require('from2')`](https://npmjs.org/from2)
+`miss.fromString` is provided by [`require('string-to-stream')`](https://github.com/feross/string-to-stream)
 
 #### example
 
@@ -521,7 +521,7 @@ Returns a readable stream that calls `read(size, next)` when data is requested f
 
 #### original module
 
-`miss.from` is provided by [`require('from2')`](https://npmjs.org/from2)
+`miss.fromArray` is provided by [`require('stream-array')`](https://github.com/mimetnet/node-stream-array)
 
 #### example
 
@@ -548,8 +548,6 @@ function fromString(string) {
 // to stdout.
 fromString('hello world').pipe(process.stdout)
 ```
-
-
 
 ### to
 
