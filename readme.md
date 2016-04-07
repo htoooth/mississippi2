@@ -14,11 +14,18 @@ var miss = require('mississippi')
 
 - [pipe](#pipe)
 - [each](#each)
+- [map](#map)
+- [filter](#filter)
+- [reduce](#reduce)
 - [pipeline](#pipeline)
 - [duplex](#duplex)
 - [through](#through)
 - [from](#from)
+- [fromString](#fromString)
+- [fromArray](#fromArray)
 - [to](#to)
+- [split](#split)
+- [spy](#spy)
 - [concat](#concat)
 - [finished](#finished)
 
@@ -86,6 +93,105 @@ function done (err) {
   console.log('sum is', sum)
 }
 ```
+
+### map
+
+##### `miss.map(mapFunction)`
+
+Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
+
+If any of the streams in the pipeline emits an error or gets destroyed, or you destroy the stream it returns, all of the streams will be destroyed and cleaned up for you.
+
+#### original module
+
+`miss.map` is provided by [`require('through2-map')`](https://github.com/brycebaril/through2-map)
+
+#### example
+
+```js
+var split = require('split2')
+
+var toInt = miss.map(function (chunk) {
+  return parseInt(chunk.toString());
+})
+
+// use it like any other transform stream
+var fs = require('fs')
+
+var read = fs.createReadStream('strings.txt')
+var write = fs.createWriteStream('numbers.txt')
+
+miss.pipe(read, split(), toInt, write, function (err) {
+  if (err) return console.error('String processing error!', err)
+  console.log('String processed successfully')
+})
+```
+### filter
+
+##### `miss.filter(filterFunction)`
+
+Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
+
+If any of the streams in the pipeline emits an error or gets destroyed, or you destroy the stream it returns, all of the streams will be destroyed and cleaned up for you.
+
+#### original module
+
+`miss.map` is provided by [`require('through2-map')`](https://github.com/brycebaril/through2-map)
+
+#### example
+
+```js
+var split = require('split2')
+
+var toInt = miss.map(function (chunk) {
+  return parseInt(chunk.toString());
+})
+
+// use it like any other transform stream
+var fs = require('fs')
+
+var read = fs.createReadStream('strings.txt')
+var write = fs.createWriteStream('numbers.txt')
+
+miss.pipe(read, split(), toInt, write, function (err) {
+  if (err) return console.error('String processing error!', err)
+  console.log('String processed successfully')
+})
+```
+
+### reduce
+
+##### `miss.reduce(reduceFunction)`
+
+Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
+
+If any of the streams in the pipeline emits an error or gets destroyed, or you destroy the stream it returns, all of the streams will be destroyed and cleaned up for you.
+
+#### original module
+
+`miss.map` is provided by [`require('through2-map')`](https://github.com/brycebaril/through2-map)
+
+#### example
+
+```js
+var split = require('split2')
+
+var toInt = miss.map(function (chunk) {
+  return parseInt(chunk.toString());
+})
+
+// use it like any other transform stream
+var fs = require('fs')
+
+var read = fs.createReadStream('strings.txt')
+var write = fs.createWriteStream('numbers.txt')
+
+miss.pipe(read, split(), toInt, write, function (err) {
+  if (err) return console.error('String processing error!', err)
+  console.log('String processed successfully')
+})
+```
+
 
 ### pipeline
 
@@ -233,6 +339,94 @@ function fromString(string) {
 // to stdout.
 fromString('hello world').pipe(process.stdout)
 ```
+
+### fromString
+
+#####`miss.fromString(String)`
+
+Make a custom [readable stream](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable).
+
+`opts` contains the options to pass on to the ReadableStream constructor e.g. for creating a readable object stream (or use the shortcut `miss.from.obj([...])`).
+
+Returns a readable stream that calls `read(size, next)` when data is requested from the stream.
+
+- `size` is the recommended amount of data (in bytes) to retrieve.
+- `next(err, chunk)` should be called when you're ready to emit more data.
+
+#### original module
+
+`miss.from` is provided by [`require('from2')`](https://npmjs.org/from2)
+
+#### example
+
+```js
+
+
+function fromString(string) {
+  return miss.from(function(size, next) {
+    // if there's no more content
+    // left in the string, close the stream.
+    if (string.length <= 0) return next(null, null)
+
+    // Pull in a new chunk of text,
+    // removing it from the string.
+    var chunk = string.slice(0, size)
+    string = string.slice(size)
+
+    // Emit "chunk" from the stream.
+    next(null, chunk)
+  })
+}
+
+// pipe "hello world" out
+// to stdout.
+fromString('hello world').pipe(process.stdout)
+```
+
+### fromArray
+
+#####`miss.fromArray(Array)`
+
+Make a custom [readable stream](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable).
+
+`opts` contains the options to pass on to the ReadableStream constructor e.g. for creating a readable object stream (or use the shortcut `miss.from.obj([...])`).
+
+Returns a readable stream that calls `read(size, next)` when data is requested from the stream.
+
+- `size` is the recommended amount of data (in bytes) to retrieve.
+- `next(err, chunk)` should be called when you're ready to emit more data.
+
+#### original module
+
+`miss.from` is provided by [`require('from2')`](https://npmjs.org/from2)
+
+#### example
+
+```js
+
+
+function fromString(string) {
+  return miss.from(function(size, next) {
+    // if there's no more content
+    // left in the string, close the stream.
+    if (string.length <= 0) return next(null, null)
+
+    // Pull in a new chunk of text,
+    // removing it from the string.
+    var chunk = string.slice(0, size)
+    string = string.slice(size)
+
+    // Emit "chunk" from the stream.
+    next(null, chunk)
+  })
+}
+
+// pipe "hello world" out
+// to stdout.
+fromString('hello world').pipe(process.stdout)
+```
+
+
 
 ### to
 
