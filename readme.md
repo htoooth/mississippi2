@@ -30,10 +30,12 @@ var miss = require('mississippi2')
 - [fromValue](#fromString) *
 - [fromArray](#fromArray) *
 - [fromPromise](#fromPromise) *
+- [fromObservable](#fromObservable)
 - [to](#to)
 - [toString](#toString) *
 - [toArray](#toArray) *
 - [toPromise](#toPromise) *
+- [toObservable](#toObservable)
 - [concat](#concat)
 - [unique](#unique) *
 - [toJSON](#toJSON) *
@@ -603,6 +605,49 @@ function fromString(string) {
 fromString('hello world').pipe(process.stdout)
 ```
 
+### fromObsesrvable
+
+#####`miss.fromObsesrvable(stream, [finishEventName, dataEventName])`
+
+Make a custom [readable stream](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable).
+
+`opts` contains the options to pass on to the ReadableStream constructor e.g. for creating a readable object stream (or use the shortcut `miss.from.obj([...])`).
+
+Returns a readable stream that calls `read(size, next)` when data is requested from the stream.
+
+- `size` is the recommended amount of data (in bytes) to retrieve.
+- `next(err, chunk)` should be called when you're ready to emit more data.
+
+#### original module
+
+`miss.fromObsesrvable` is provided by [`require("rx-node").writeToStream`](https://github.com/Reactive-Extensions/rx-node)
+
+#### example
+
+```js
+
+
+function fromString(string) {
+  return miss.from(function(size, next) {
+    // if there's no more content
+    // left in the string, close the stream.
+    if (string.length <= 0) return next(null, null)
+
+    // Pull in a new chunk of text,
+    // removing it from the string.
+    var chunk = string.slice(0, size)
+    string = string.slice(size)
+
+    // Emit "chunk" from the stream.
+    next(null, chunk)
+  })
+}
+
+// pipe "hello world" out
+// to stdout.
+fromString('hello world').pipe(process.stdout)
+```
+
 
 ### to
 
@@ -720,7 +765,7 @@ This function is useful for simplifying stream handling code as it lets you hand
 
 #### original module
 
-`miss.toPromise` is provided by [`require('stream-to-promise')`](https://github.com/bendrucker/stream-to-promise)
+`miss.toPromise` is provided by [`require('stream-to-promise2')`](https://github.com/htoooth/stream-to-promise2)
 
 #### example
 
@@ -736,7 +781,31 @@ miss.finished(copyDest, function(err) {
 })
 ```
 
+### toObsesrvable
 
+#####`miss.toObsesrvable(observable, stream, [encoding])`
+
+Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+
+This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+
+#### original module
+
+`miss.toObsesrvable` is provided by [`require("rx-node").writeToStream`](https://github.com/Reactive-Extensions/rx-node)
+
+#### example
+
+```js
+var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+```
 
 ### concat
 

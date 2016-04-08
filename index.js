@@ -22,9 +22,10 @@ module.exports.to = require('flush-write-stream')
 module.exports.toArray = require("stream-to-array")
 module.exports.toString = require("stream-to-string")
 module.exports.toPromise = require("stream-to-promise2")
+module.exports.toObservable = require("rx-node").fromStream
 
 module.exports.from = require('from2')
 module.exports.fromArray = require('stream-from-array')
 module.exports.fromValue = require('stream-from-value')
 module.exports.fromPromise = require("stream-from-promise")
-
+module.exports.fromObservable = require("rx-node").writeToStream
