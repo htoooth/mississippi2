@@ -30,12 +30,12 @@ var miss = require('mississippi2')
 - [fromValue](#fromString) *
 - [fromArray](#fromArray) *
 - [fromPromise](#fromPromise) *
-- [fromObservable](#fromObservable)
+- [fromObservable](#fromObservable) *
 - [to](#to)
 - [toString](#toString) *
 - [toArray](#toArray) *
 - [toPromise](#toPromise) *
-- [toObservable](#toObservable)
+- [toObservable](#toObservable) *
 - [concat](#concat)
 - [unique](#unique) *
 - [toJSON](#toJSON) *
