@@ -989,6 +989,8 @@ miss.finished(copyDest, function(err) {
 })
 ```
 
+### throttle
+
 #####`miss.throttle(n)`
 
 Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
@@ -1012,6 +1014,8 @@ miss.finished(copyDest, function(err) {
   console.log('write success')
 })
 ```
+
+### balance
 
 #####`miss.balance`
 
