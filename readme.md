@@ -77,11 +77,7 @@ miss.pipe(read, write, function (err) {
 
 ##### `miss.merge(streams, [options])`
 
-Pipes streams together and destroys all of them if one of them closes. Calls `cb` with `(error)` if there was an error in any of the streams.
-
-When using standard `source.pipe(destination)` the source will _not_ be destroyed if the destination emits close or error. You are also not able to provide a callback to tell when the pipe has finished.
-
-`miss.pipe` does these two things for you, ensuring you handle stream errors 100% of the time (unhandled errors are probably the most common bug in most node streams code)
+Return a streams that merged alll streams together and emmit parallely events. When merge readable streams, return a readable stream that reads from multiple readable streams at the same time. If you want to emits multiple other streams one after another, use [multistream](https://github.com/feross/multistream). When merge writable streams, retrun a writable stream that writes to multiple other writeable streams.
 
 #### original module
 
@@ -90,17 +86,30 @@ When using standard `source.pipe(destination)` the source will _not_ be destroye
 #### example
 
 ```js
-// lets do a simple file copy
-var fs = require('fs')
+// merge readable stream
+var multiRead = miss.merge([
+  miss.fromValue("hello"),
+  miss.fromValue("world")
+]);
 
-var read = fs.createReadStream('./original.zip')
-var write = fs.createWriteStream('./copy.zip')
+multiRead.on("data", function(data){
+  console.log(data); // "hello" "world" or "world" "hello"
+});
 
-// use miss.pipe instead of read.pipe(write)
-miss.pipe(read, write, function (err) {
-  if (err) return console.error('Copy error!', err)
-  console.log('Copied successfully')
-})
+multiRead.on("end", function(){
+  console.log("no more data");
+});
+
+// merge writable stream
+var read = miss.fromValue('hello, world');
+var write1 = fs.createWriteStream('./file1.txt');
+var write2 = fs.createWriteStream('./file2.txt');
+
+var multiWrite = miss.merge([write1,write2]);
+
+read.pipe(multiWrite).on("end",function(){
+  // both file1 and file2 now contains "hello, world"
+});
 ```
 
 ### condition
