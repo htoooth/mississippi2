@@ -29,3 +29,12 @@ module.exports.fromArray = require('stream-from-array')
 module.exports.fromValue = require('stream-from-value')
 module.exports.fromPromise = require("stream-from-promise")
 module.exports.fromObservable = require("rx-node").writeToStream
+
+var Throttle = require("throttle");
+module.exports.throttle = function (n) {
+  return new Throttle(n);
+}
+
+module.exports.Parser = require('stream-parser')
+
+module.exports.balance = require("stream-balance")

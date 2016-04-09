@@ -42,6 +42,9 @@ var miss = require('mississippi2')
 - [stringify](#stringify) *
 - [child](#child) *
 - [finished](#finished)
+- [throttle](#throttle) *
+- [balance](#balance) *
+- [Parser](Parser) *
 
 ### pipe
 
@@ -77,7 +80,7 @@ miss.pipe(read, write, function (err) {
 
 ##### `miss.merge(streams, [options])`
 
-Return a streams that merged alll streams together and emmit parallely events. When merge readable streams, return a readable stream that reads from multiple readable streams at the same time. If you want to emits multiple other streams one after another, use [multistream](https://github.com/feross/multistream). When merge writable streams, retrun a writable stream that writes to multiple other writeable streams.
+Return a streams that merged alll streams together and emmit parallely events. When merge readable streams, return a readable stream that reads from multiple readable streams at the same time. If you want to emits multiple other streams one after another, use [merge2](https://github.com/teambition/merge2). When merge writable streams, retrun a writable stream that writes to multiple other writeable streams.
 
 #### original module
 
@@ -986,3 +989,75 @@ miss.finished(copyDest, function(err) {
 })
 ```
 
+#####`miss.throttle(n)`
+
+Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+
+This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+
+#### original module
+
+`miss.throttle` is provided by [`require("throttle")`](https://github.com/TooTallNate/node-throttle)
+
+#### example
+
+```js
+var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+```
+
+#####`miss.balance`
+
+Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+
+This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+
+#### original module
+
+`miss.balance` is provided by [`require('stream-balance')`](https://github.com/htoooth/stream-balance)
+
+#### example
+
+```js
+var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+```
+
+
+#####`miss.Parser`
+
+Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+
+This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+
+#### original module
+
+`miss.Parser` is provided by [`require('stream-parser')`](https://github.com/TooTallNate/node-stream-parser)
+
+#### example
+
+```js
+var copySource = fs.createReadStream('./movie.mp4')
+var copyDest = fs.createWriteStream('./movie-copy.mp4')
+
+copySource.pipe(copyDest)
+
+miss.finished(copyDest, function(err) {
+  if (err) return console.log('write failed', err)
+  console.log('write success')
+})
+```
