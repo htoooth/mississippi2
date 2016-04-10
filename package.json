@@ -1,6 +1,6 @@
 {
   "name": "mississippi2",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "a collection of useful streams",
   "main": "index.js",
   "scripts": {
