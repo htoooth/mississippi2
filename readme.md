@@ -199,11 +199,11 @@ function done (err) {
 
 ### map
 
-##### `miss.map(mapper)`
+##### `miss.map([options,] fn)`
 
-Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
+Return a `stream.Transfrom` instance that will call `fn(chunk, index)` on each stream segment.
 
-If any of the streams in the pipeline emits an error or gets destroyed, or you destroy the stream it returns, all of the streams will be destroyed and cleaned up for you.
+Note you will __NOT__ be able to skip chunks. This is intended for modification only. If you want filter the stream content, use `miss.filter`. This transform also does not have a flush function.
 
 #### original module
 
@@ -212,23 +212,15 @@ If any of the streams in the pipeline emits an error or gets destroyed, or you d
 #### example
 
 ```js
-var split = require('split2')
+var truncate = miss.map(function (chunk) {
+  return chunk.slice(0, 10)
+});
 
-var toInt = miss.map(function (chunk) {
-  return parseInt(chunk.toString());
-})
+// Then use your map:
+source.pipe(truncate).pipe(sink)
 
-// use it like any other transform stream
-var fs = require('fs')
-
-var read = fs.createReadStream('strings.txt')
-var write = fs.createWriteStream('numbers.txt')
-
-miss.pipe(read, split(), toInt, write, function (err) {
-  if (err) return console.error('String processing error!', err)
-  console.log('String processed successfully')
-})
 ```
+
 ### filter
 
 ##### `miss.filter(predicate)`
