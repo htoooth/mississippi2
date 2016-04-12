@@ -118,11 +118,13 @@ read.pipe(multiWrite).on("end",function(){
 
 ##### `miss.condition(condition, stream, [elseStream])`
 
-Pipes streams together and destroys all of them if one of them closes. Calls `cb` with `(error)` if there was an error in any of the streams.
+Condition stream can conditionally control the flow of stream data.
 
-When using standard `source.pipe(destination)` the source will _not_ be destroyed if the destination emits close or error. You are also not able to provide a callback to tell when the pipe has finished.
+Condition stream will pipe data to `stream` whenever `condition` is truthy.
 
-`miss.pipe` does these two things for you, ensuring you handle stream errors 100% of the time (unhandled errors are probably the most common bug in most node streams code)
+If `condition` is falsey and `elseStream` is passed, data will pipe to `elseStream`.
+
+After data is piped to `stream` or `elseStream` or neither, data is piped down-stream.
 
 #### original module
 
@@ -131,17 +133,33 @@ When using standard `source.pipe(destination)` the source will _not_ be destroye
 #### example
 
 ```js
-// lets do a simple file copy
-var fs = require('fs')
+// if the condition returns truthy, data is piped to the child stream
+var ternaryStream = require('ternary-stream');
 
-var read = fs.createReadStream('./original.zip')
-var write = fs.createWriteStream('./copy.zip')
+var condition = function (data) {
+  return true;
+};
 
-// use miss.pipe instead of read.pipe(write)
-miss.pipe(read, write, function (err) {
-  if (err) return console.error('Copy error!', err)
-  console.log('Copied successfully')
-})
+process.stdin
+  .pipe(ternaryStream(condition, process.stdout))
+  .pipe(fs.createWriteStream('./out.txt'));
+
+// Data will conditionally go to stdout, and always go to the file
+
+var ternaryStream = require('ternary-stream');
+var through2 = require('through2');
+
+var count = 0;
+var condition = function (data) {
+  count++;
+  return count % 2;
+};
+
+process.stdin
+  .pipe(ternaryStream(condition, fs.createWriteStream('./truthy.txt'), fs.createWriteStream('./falsey.txt')))
+  .pipe(process.stdout);
+
+
 ```
 
 ### each
