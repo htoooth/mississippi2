@@ -30,7 +30,6 @@ var miss = require('mississippi2')
 - [through](#through)
 - [from](#from)
 - [fromValue](#fromString) *
-- [fromArray](#fromArray) *
 - [fromPromise](#fromPromise) *
 - [fromObservable](#fromObservable) *
 - [to](#to)
@@ -432,8 +431,6 @@ Returns a readable stream that calls `read(size, next)` when data is requested f
 #### example
 
 ```js
-
-
 function fromString(string) {
   return miss.from(function(size, next) {
     // if there's no more content
@@ -459,14 +456,7 @@ fromString('hello world').pipe(process.stdout)
 
 #####`miss.fromValue(value)`
 
-Make a custom [readable stream](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable).
-
-`opts` contains the options to pass on to the ReadableStream constructor e.g. for creating a readable object stream (or use the shortcut `miss.from.obj([...])`).
-
-Returns a readable stream that calls `read(size, next)` when data is requested from the stream.
-
-- `size` is the recommended amount of data (in bytes) to retrieve.
-- `next(err, chunk)` should be called when you're ready to emit more data.
+Create streams from (single) arbitrary Javascript values like `strings`, `functions`, `arrays`, etc. Please __Note__ miss.fromValue are [Readable](http://nodejs.org/api/stream.html#stream_class_stream_readable_1) streams.
 
 #### original module
 
@@ -475,68 +465,16 @@ Returns a readable stream that calls `read(size, next)` when data is requested f
 #### example
 
 ```js
-function fromString(string) {
-  return miss.from(function(size, next) {
-    // if there's no more content
-    // left in the string, close the stream.
-    if (string.length <= 0) return next(null, null)
+miss.fromValue('some string')
+  .pipe(process.stdout); // output: some string
 
-    // Pull in a new chunk of text,
-    // removing it from the string.
-    var chunk = string.slice(0, size)
-    string = string.slice(size)
+miss.fromValue(new Buffer('some string'))
+  .pipe(process.stdout); // output: some string
 
-    // Emit "chunk" from the stream.
-    next(null, chunk)
-  })
-}
-
-// pipe "hello world" out
-// to stdout.
-fromString('hello world').pipe(process.stdout)
-```
-
-### fromArray
-
-#####`miss.fromArray(Array)`
-
-Make a custom [readable stream](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable).
-
-`opts` contains the options to pass on to the ReadableStream constructor e.g. for creating a readable object stream (or use the shortcut `miss.from.obj([...])`).
-
-Returns a readable stream that calls `read(size, next)` when data is requested from the stream.
-
-- `size` is the recommended amount of data (in bytes) to retrieve.
-- `next(err, chunk)` should be called when you're ready to emit more data.
-
-#### original module
-
-`miss.fromArray` is provided by [`require('stream-from-array')`](https://github.com/schnittstabil/stream-from-array)
-
-#### example
-
-```js
-
-
-function fromString(string) {
-  return miss.from(function(size, next) {
-    // if there's no more content
-    // left in the string, close the stream.
-    if (string.length <= 0) return next(null, null)
-
-    // Pull in a new chunk of text,
-    // removing it from the string.
-    var chunk = string.slice(0, size)
-    string = string.slice(size)
-
-    // Emit "chunk" from the stream.
-    next(null, chunk)
-  })
-}
-
-// pipe "hello world" out
-// to stdout.
-fromString('hello world').pipe(process.stdout)
+// Stream of (arbitrary) Javascript Value
+miss.fromValue.obj(['some', 'mixed', 'array', 42]).on('data', function(data){
+    console.log(data); // output: [ 'some', 'mixed', 'array', 42 ]
+  });
 ```
 
 ### fromPromise
