@@ -863,7 +863,6 @@ new Child_Process().spawn(command, [args], [options])
 #### example
 
 ```js
-
 var toJPEG = miss.child.spawn('convert', ['-', 'JPEG:-'])
 var getFormat = miss.child.spawn('identify', ['-format', '%m', '-'])
 
@@ -906,9 +905,7 @@ miss.finished(copyDest, function(err) {
 
 #####`miss.throttle(n)`
 
-Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
-
-This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+This stream offers a `Throttle` passthrough stream class, which allows you to write data to it and it will be passed through in `n` bytes per second. It can be useful for throttling HTTP uploads or to simulate reading from a file in real-time, etc.
 
 #### original module
 
@@ -917,15 +914,8 @@ This function is useful for simplifying stream handling code as it lets you hand
 #### example
 
 ```js
-var copySource = fs.createReadStream('./movie.mp4')
-var copyDest = fs.createWriteStream('./movie-copy.mp4')
-
-copySource.pipe(copyDest)
-
-miss.finished(copyDest, function(err) {
-  if (err) return console.log('write failed', err)
-  console.log('write success')
-})
+// throttling stdin at 1 byte per second and outputting the data to stdout:
+process.stdin.pipe(miss.throttle(1)).pipe(process.stdout);
 ```
 
 #####`miss.Parser`
