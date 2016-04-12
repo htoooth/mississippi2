@@ -1723,13 +1723,41 @@ _skipBytes(n, cb) - skips &quot;n&quot; bytes and then calls &quot;cb&quot; when
 <h5 id="original-module_28"><a name="user-content-original-module_28" href="#original-module_28" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h5>
 <p><code>miss.Parser</code> is provided by <a href="https://github.com/TooTallNate/node-stream-parser"><code>require('stream-parser')</code></a></p>
 <h4 id="example_28"><a name="user-content-example_28" href="#example_28" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
-<pre><code class="js">var copySource = fs.createReadStream('./movie.mp4')
-var copyDest = fs.createWriteStream('./movie-copy.mp4')
+<p>Let&rsquo;s create a quick <code>Transform</code> stream subclass that utilizes the parser&rsquo;s<br />
+<code>_bytes()</code> and <code>_passthrough()</code> functions to parse a theoretical file format that<br />
+has an 8-byte header we want to parse, and then pass through the rest of the data.</p>
+<pre><code class="js">var inherits = require('util').inherits;
+var Transform = require('stream').Transform;
 
-copySource.pipe(copyDest)
+// create a Transform stream subclass
+function MyParser () {
+  Transform.call(this);
 
-miss.finished(copyDest, function(err) {
-  if (err) return console.log('write failed', err)
-  console.log('write success')
-})
+  // buffer the first 8 bytes written
+  this._bytes(8, this.onheader);
+}
+inherits(MyParser, Transform);
+
+// mixin stream-parser into MyParser's `prototype`
+miss.Parser(MyParser.prototype);
+
+// invoked when the first 8 bytes have been received
+MyParser.prototype.onheader = function (buffer, output) {
+  // parse the &quot;buffer&quot; into a useful &quot;header&quot; object
+  var header = {};
+  header.type = buffer.readUInt32LE(0);
+  header.name = buffer.toString('utf8', 4);
+  this.emit('header', header);
+
+  // it's usually a good idea to queue the next &quot;piece&quot; within the callback
+  this._passthrough(Infinity);
+};
+
+
+// now we can *use* it!
+var parser = new MyParser();
+parser.on('header', function (header) {
+  console.error('got &quot;header&quot;', header);
+});
+process.stdin.pipe(parser).pipe(process.stdout);
 </code></pre></article></body></html>
