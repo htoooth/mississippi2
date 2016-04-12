@@ -266,9 +266,9 @@ source.pipe(sum).pipe(sink)
 
 ##### `miss.split([matcher, mapper, options])`
 
-Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
+Break up a stream and reassemble it so that each line is a chunk.
 
-If any of the streams in the pipeline emits an error or gets destroyed, or you destroy the stream it returns, all of the streams will be destroyed and cleaned up for you.
+`matcher` may be a `String`, or a `RegExp`.
 
 #### original module
 
@@ -277,22 +277,11 @@ If any of the streams in the pipeline emits an error or gets destroyed, or you d
 #### example
 
 ```js
-var split = require('split2')
-
-var toInt = miss.map(function (chunk) {
-  return parseInt(chunk.toString());
-})
-
-// use it like any other transform stream
-var fs = require('fs')
-
-var read = fs.createReadStream('strings.txt')
-var write = fs.createWriteStream('numbers.txt')
-
-miss.pipe(read, split(), toInt, write, function (err) {
-  if (err) return console.error('String processing error!', err)
-  console.log('String processed successfully')
-})
+ fs.createReadStream(file)
+    .pipe(miss.split())
+    .on('data', function (line) {
+      //each chunk now is a seperate line!
+    })
 ```
 
 ### spy 
