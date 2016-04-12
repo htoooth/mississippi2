@@ -29,14 +29,14 @@ var miss = require('mississippi2')
 - [duplex](#duplex)
 - [through](#through)
 - [from](#from)
-- [fromValue](#fromString) *
-- [fromPromise](#fromPromise) *
-- [fromObservable](#fromObservable) *
+- [fromValue](#fromstring) *
+- [fromPromise](#frompromise) *
+- [fromObservable](#fromobservable) *
 - [to](#to)
-- [toString](#toString) *
-- [toArray](#toArray) *
-- [toPromise](#toPromise) *
-- [toObservable](#toObservable) *
+- [toString](#tostring) *
+- [toArray](#toarray) *
+- [toPromise](#topromise) *
+- [toObservable](#toobservable) *
 - [concat](#concat)
 - [unique](#unique) *
 - [toJSON](#toJSON) *
@@ -44,7 +44,7 @@ var miss = require('mississippi2')
 - [child](#child) *
 - [finished](#finished)
 - [throttle](#throttle) *
-- [Parser](#Parser) *
+- [Parser](#parser) *
 
 ### pipe
 
