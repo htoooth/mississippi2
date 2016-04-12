@@ -1,5 +1,7 @@
 # mississippi2
 
+[![NPM](https://nodei.co/npm/mississippi2.png?downloads=true)](https://nodei.co/npm/mississippi2/)
+
 This module was inspired from [mississippi](https://github.com/maxogden/mississippi).
 
 ## usage
