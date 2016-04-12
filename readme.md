@@ -29,7 +29,7 @@ var miss = require('mississippi2')
 - [duplex](#duplex)
 - [through](#through)
 - [from](#from)
-- [fromValue](#fromstring) *
+- [fromValue](#fromvalue) *
 - [fromPromise](#frompromise) *
 - [fromObservable](#fromobservable) *
 - [to](#to)
