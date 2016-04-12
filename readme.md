@@ -456,7 +456,9 @@ fromString('hello world').pipe(process.stdout)
 
 #####`miss.fromValue(value)`
 
-Create streams from (single) arbitrary Javascript values like `strings`, `functions`, `arrays`, etc. Please __Note__ miss.fromValue are [Readable](http://nodejs.org/api/stream.html#stream_class_stream_readable_1) streams.
+Create streams from (single) arbitrary Javascript values like `strings`, `functions`, `arrays`, etc. 
+
+Please __Note__ miss.fromValue are [Readable](http://nodejs.org/api/stream.html#stream_class_stream_readable_1) streams.
 
 #### original module
 
@@ -481,14 +483,7 @@ miss.fromValue.obj(['some', 'mixed', 'array', 42]).on('data', function(data){
 
 #####`miss.fromPromise(promise)`
 
-Make a custom [readable stream](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable).
-
-`opts` contains the options to pass on to the ReadableStream constructor e.g. for creating a readable object stream (or use the shortcut `miss.from.obj([...])`).
-
-Returns a readable stream that calls `read(size, next)` when data is requested from the stream.
-
-- `size` is the recommended amount of data (in bytes) to retrieve.
-- `next(err, chunk)` should be called when you're ready to emit more data.
+Make a [Readable](http://nodejs.org/api/stream.html#stream_class_stream_readable_1) streams from `ECMAScript 2015 Promises` that return Javascript values like numbers, strings, objects, functions.
 
 #### original module
 
@@ -497,27 +492,25 @@ Returns a readable stream that calls `read(size, next)` when data is requested f
 #### example
 
 ```js
+// `String promises
+var stringPromise = new Promise(function(resolve, reject){
+  setTimeout(function(){
+    resolve('strrrring!');
+  }, 500);
+});
 
+miss.fromPromise(stringPromise).pipe(process.stdout); // => output: strrrring!
 
-function fromString(string) {
-  return miss.from(function(size, next) {
-    // if there's no more content
-    // left in the string, close the stream.
-    if (string.length <= 0) return next(null, null)
+// Buffer promises
+var bufferPromise = new Promise(function(resolve, reject){
+  setTimeout(function(){
+    resolve(new Buffer('buff!'));
+  }, 500);
+});
 
-    // Pull in a new chunk of text,
-    // removing it from the string.
-    var chunk = string.slice(0, size)
-    string = string.slice(size)
+StreamFromPromise(bufferPromise)
+  .pipe(process.stdout); // output: buff!
 
-    // Emit "chunk" from the stream.
-    next(null, chunk)
-  })
-}
-
-// pipe "hello world" out
-// to stdout.
-fromString('hello world').pipe(process.stdout)
 ```
 
 ### fromObsesrvable
