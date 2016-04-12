@@ -618,7 +618,7 @@ miss.toString(stream, function (err, msg) {
     console.log(msg)
 })
 
-# or with promises
+// or with promises
 miss.toString(stream).then(function (msg) {
     console.log(msg)
 })
@@ -632,9 +632,9 @@ stream.end()
 
 #####`miss.toArray([stream], [callback(err, arr)])`
 
-Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+Concatenate a readable stream's data into a single array.
 
-This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+Returns all the data objects in an array. This is useful for streams in object mode if you want to just use an array.
 
 #### original module
 
@@ -643,15 +643,21 @@ This function is useful for simplifying stream handling code as it lets you hand
 #### example
 
 ```js
-var copySource = fs.createReadStream('./movie.mp4')
-var copyDest = fs.createWriteStream('./movie-copy.mp4')
+// with callback
+var stream = miss.through();
 
-copySource.pipe(copyDest)
-
-miss.finished(copyDest, function(err) {
-  if (err) return console.log('write failed', err)
-  console.log('write success')
+miss.toArray(stream, function (err, msg) {
+    console.log(msg)
 })
+
+// or with promises
+miss.toArray(stream).then(function (msg) {
+    console.log(msg)
+})
+
+stream.write('this is a')
+stream.write(' test')
+stream.end()
 ```
 
 ### toPromise
