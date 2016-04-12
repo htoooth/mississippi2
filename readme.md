@@ -513,18 +513,20 @@ StreamFromPromise(bufferPromise)
 
 ```
 
-### fromObsesrvable
+### fromObservable
 
-#####`miss.fromObsesrvable(stream, [finishEventName, dataEventName])`
+#####`miss.fromObservable(observable, stream, [encoding])`
 
-Make a custom [readable stream](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable).
+Writes an observable sequence to a stream.
 
-`opts` contains the options to pass on to the ReadableStream constructor e.g. for creating a readable object stream (or use the shortcut `miss.from.obj([...])`).
+__Arguments__
 
-Returns a readable stream that calls `read(size, next)` when data is requested from the stream.
+- `observable` *(Observable)*: Observable sequence to write to a stream.
+- `stream` *(Stream)*: The stream to write to.
+- `[encoding]` *(String)*: The encoding of the item to write.
 
-- `size` is the recommended amount of data (in bytes) to retrieve.
-- `next(err, chunk)` should be called when you're ready to emit more data.
+__Returns__
+- *(Disposable)*: The subscription handle.
 
 #### original module
 
@@ -533,29 +535,13 @@ Returns a readable stream that calls `read(size, next)` when data is requested f
 #### example
 
 ```js
+var Rx = require('rx');
+var RxNode = require('rx-node');
 
+var source = Rx.Observable.range(0, 5);
 
-function fromString(string) {
-  return miss.from(function(size, next) {
-    // if there's no more content
-    // left in the string, close the stream.
-    if (string.length <= 0) return next(null, null)
-
-    // Pull in a new chunk of text,
-    // removing it from the string.
-    var chunk = string.slice(0, size)
-    string = string.slice(size)
-
-    // Emit "chunk" from the stream.
-    next(null, chunk)
-  })
-}
-
-// pipe "hello world" out
-// to stdout.
-fromString('hello world').pipe(process.stdout)
+var subscription = RxNode.writeToStream(source, process.stdout, 'utf8');
 ```
-
 
 ### to
 
