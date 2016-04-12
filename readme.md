@@ -806,9 +806,15 @@ miss.toJSON(request('/some/url.json'), function(err, json) {
 
 #####`miss.stringify([options])`
 
-Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+Similar to JSONStream.stringify() except it is, by default, a binary stream, and it is a streams2 implementation.
 
-This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+Please __NOTE__ : The main use case for this is to stream a database query to a web client. This is meant to be used only with `arrays`, not `objects`.
+
+__Separators__
+
+- The stream always starts with '[\n'.
+- Documents are separated by '\n,\n'.
+- The stream is terminated with '\n]\n'.
 
 #### original module
 
@@ -817,15 +823,24 @@ This function is useful for simplifying stream handling code as it lets you hand
 #### example
 
 ```js
-var copySource = fs.createReadStream('./movie.mp4')
-var copyDest = fs.createWriteStream('./movie-copy.mp4')
+app.get('/things', function (req, res, next) {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
 
-copySource.pipe(copyDest)
-
-miss.finished(copyDest, function(err) {
-  if (err) return console.log('write failed', err)
-  console.log('write success')
+  db.things.find()
+  .stream()
+  .pipe(miss.stringify())
+  .pipe(res)
 })
+```
+
+will yield something like
+
+```
+[
+{"_id":"123412341234123412341234"}
+,
+{"_id":"123412341234123412341234"}
+]
 ```
 
 
