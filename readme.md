@@ -536,11 +536,10 @@ __Returns__
 
 ```js
 var Rx = require('rx');
-var RxNode = require('rx-node');
-
 var source = Rx.Observable.range(0, 5);
 
-var subscription = RxNode.writeToStream(source, process.stdout, 'utf8');
+var subscription = miss.fromObsesrvable(source, process.stdout, 'utf8');
+// => 01234
 ```
 
 ### to
@@ -697,9 +696,7 @@ __Returns__
 #### example
 
 ```js
-var RxNode = require('rx-node');
-
-var subscription = RxNode.fromReadableStream(process.stdin)
+var subscription = miss.toObservable(process.stdin)
     .subscribe(function (x) { console.log(x); });
 
 // => r<Buffer 72>
