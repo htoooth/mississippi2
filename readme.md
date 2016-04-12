@@ -286,11 +286,11 @@ Break up a stream and reassemble it so that each line is a chunk.
 
 ### spy 
 
-##### `miss.spy(spy)`
+##### `miss.spy([options], fn)`
 
-Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
+Create a `miss.spy` instance that will call `fn(chunk)` and then silently pass through data downstream.
 
-If any of the streams in the pipeline emits an error or gets destroyed, or you destroy the stream it returns, all of the streams will be destroyed and cleaned up for you.
+Note you will **NOT** be able to do anything but spy and abort the stream pipeline. To do any filtering or transformations you should consider `miss.through` `miss.filter` or `miss.map`.
 
 #### original module
 
@@ -299,22 +299,13 @@ If any of the streams in the pipeline emits an error or gets destroyed, or you d
 #### example
 
 ```js
-var split = require('split2')
+var count = 0;
+var countChunks = miss.spy(function (chunk) {
+  count++
+});
 
-var toInt = miss.map(function (chunk) {
-  return parseInt(chunk.toString());
-})
-
-// use it like any other transform stream
-var fs = require('fs')
-
-var read = fs.createReadStream('strings.txt')
-var write = fs.createWriteStream('numbers.txt')
-
-miss.pipe(read, split(), toInt, write, function (err) {
-  if (err) return console.error('String processing error!', err)
-  console.log('String processed successfully')
-})
+// Then use your spy:
+source.pipe(countChunks).pipe(sink);
 ```
 
 ### pipeline
