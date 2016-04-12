@@ -517,7 +517,7 @@ StreamFromPromise(bufferPromise)
 
 #####`miss.fromObservable(observable, stream, [encoding])`
 
-Writes an observable sequence to a stream.
+Writes an observable sequence to a writable stream.
 
 __Arguments__
 
