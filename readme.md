@@ -219,11 +219,11 @@ source.pipe(truncate).pipe(sink)
 
 ### filter
 
-##### `miss.filter(predicate)`
+##### `miss.filter([options], fn)`
 
-Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
+Create a  `through2-filter`  instance that will call `fn(chunk)`. If `fn(chunk)` returns "true" the chunk will be passed downstream. Otherwise it will be dropped.
 
-If any of the streams in the pipeline emits an error or gets destroyed, or you destroy the stream it returns, all of the streams will be destroyed and cleaned up for you.
+Note you will __NOT__ be able to alter the content of the chunks. This is intended for filtering only. If you want to modify the stream content, use either  `miss.through`  or `miss.map`.
 
 #### original module
 
@@ -232,22 +232,13 @@ If any of the streams in the pipeline emits an error or gets destroyed, or you d
 #### example
 
 ```js
-var split = require('split2')
-
-var toInt = miss.filter(function (chunk) {
-  return parseInt(chunk.toString());
+var skip = miss.filter(function (chunk) {
+  // skip buffers longer than 100
+  return chunk.length < 100
 })
 
-// use it like any other transform stream
-var fs = require('fs')
-
-var read = fs.createReadStream('strings.txt')
-var write = fs.createWriteStream('numbers.txt')
-
-miss.pipe(read, split(), toInt, write, function (err) {
-  if (err) return console.error('String processing error!', err)
-  console.log('String processed successfully')
-})
+// Then use your filter:
+source.pipe(skip).pipe(sink)
 ```
 
 ### reduce
