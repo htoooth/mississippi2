@@ -136,19 +136,15 @@ After data is piped to `stream` or `elseStream` or neither, data is piped down-s
 
 ```js
 // if the condition returns truthy, data is piped to the child stream
-var ternaryStream = require('ternary-stream');
-
 var condition = function (data) {
   return true;
 };
 
 process.stdin
-  .pipe(ternaryStream(condition, process.stdout))
+  .pipe(miss.condition(condition, process.stdout))
   .pipe(fs.createWriteStream('./out.txt'));
 
 // Data will conditionally go to stdout, and always go to the file
-
-var ternaryStream = require('ternary-stream');
 var through2 = require('through2');
 
 var count = 0;
@@ -158,10 +154,8 @@ var condition = function (data) {
 };
 
 process.stdin
-  .pipe(ternaryStream(condition, fs.createWriteStream('./truthy.txt'), fs.createWriteStream('./falsey.txt')))
+  .pipe(miss.condition(condition, fs.createWriteStream('./truthy.txt'), fs.createWriteStream('./falsey.txt')))
   .pipe(process.stdout);
-
-
 ```
 
 ### each
