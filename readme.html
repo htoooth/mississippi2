@@ -1399,8 +1399,8 @@ StreamFromPromise(bufferPromise)
 
 </code></pre>
 
-<h3 id="fromobsesrvable"><a name="user-content-fromobsesrvable" href="#fromobsesrvable" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>fromObsesrvable</h3>
-<h5 id="missfromobsesrvableobservable-stream-encoding"><code>miss.fromObsesrvable(observable, stream, [encoding])</code></h5>
+<h3 id="fromobservable"><a name="user-content-fromobservable" href="#fromobservable" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>fromObservable</h3>
+<h5 id="missfromobservableobservable-stream-encoding"><code>miss.fromObservable(observable, stream, [encoding])</code></h5>
 <p>Writes an observable sequence to a stream.</p>
 <p><strong>Arguments</strong></p>
 <ul>
@@ -1518,12 +1518,12 @@ miss.finished(copyDest, function(err) {
 })
 </code></pre>
 
-<h3 id="toobsesrvable"><a name="user-content-toobsesrvable" href="#toobsesrvable" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>toObsesrvable</h3>
-<h5 id="misstoobsesrvableobservable-stream-encoding"><code>miss.toObsesrvable(observable, stream, [encoding])</code></h5>
-<p>Waits for <code>stream</code> to finish or error and then calls <code>cb</code> with <code>(err)</code>. <code>cb</code> will only be called once. <code>err</code> will be null if the stream finished without error, or else it will be populated with the error from the streams <code>error</code> event.</p>
+<h3 id="toobservable"><a name="user-content-toobservable" href="#toobservable" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>toObservable</h3>
+<h5 id="misstoobservablestream-finisheventname-dataeventname"><code>miss.toObservable(stream, finishEventName, dataEventName)</code></h5>
+<p>Converts a flowing stream to an Observable sequence.</p>
 <p>This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It&rsquo;s used internally <code>miss.pipe</code>.</p>
 <h4 id="original-module_20"><a name="user-content-original-module_20" href="#original-module_20" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>original module</h4>
-<p><code>miss.toObsesrvable</code> is provided by <a href="https://github.com/Reactive-Extensions/rx-node"><code>require("rx-node").writeToStream</code></a></p>
+<p><code>miss.toObservable</code> is provided by <a href="https://github.com/Reactive-Extensions/rx-node"><code>require("rx-node").writeToStream</code></a></p>
 <h4 id="example_20"><a name="user-content-example_20" href="#example_20" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>example</h4>
 <pre><code class="js">var copySource = fs.createReadStream('./movie.mp4')
 var copyDest = fs.createWriteStream('./movie-copy.mp4')

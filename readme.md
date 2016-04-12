@@ -675,30 +675,35 @@ miss.finished(copyDest, function(err) {
 })
 ```
 
-### toObsesrvable
+### toObservable
 
-#####`miss.toObsesrvable(observable, stream, [encoding])`
+#####`miss.toObservable(stream, finishEventName, dataEventName)`
 
-Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+Converts a flowing readable to an Observable sequence.
 
-This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+__Arguments__
+
+- `stream` *(Stream)*: A stream to convert to a observable sequence.
+- `[dataEventName]` *(String)*: Event that notifies about incoming data. ("data" by default)
+
+__Returns__
+
+- *(Observable)*: An observable sequence which fires on each 'data' event as well as handling 'error' and 'end' events.
 
 #### original module
 
-`miss.toObsesrvable` is provided by [`require("rx-node").writeToStream`](https://github.com/Reactive-Extensions/rx-node)
+`miss.toObservable` is provided by [`require("rx-node").writeToStream`](https://github.com/Reactive-Extensions/rx-node)
 
 #### example
 
 ```js
-var copySource = fs.createReadStream('./movie.mp4')
-var copyDest = fs.createWriteStream('./movie-copy.mp4')
+var RxNode = require('rx-node');
 
-copySource.pipe(copyDest)
+var subscription = RxNode.fromReadableStream(process.stdin)
+    .subscribe(function (x) { console.log(x); });
 
-miss.finished(copyDest, function(err) {
-  if (err) return console.log('write failed', err)
-  console.log('write success')
-})
+// => r<Buffer 72>
+// => x<Buffer 78>
 ```
 
 ### concat
