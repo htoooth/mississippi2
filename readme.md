@@ -780,14 +780,11 @@ stream.end();
 
 ```
 
-
 ### toJSON
 
 #####`miss.toJSON(stream, callback)`
 
-Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
-
-This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+Read all from `stream`, then `JSON.parse` and call `callback(err, json)` with the result. If there's an Error in the stream itself, or parsing the JSON, an error will be passed.
 
 #### original module
 
@@ -796,15 +793,12 @@ This function is useful for simplifying stream handling code as it lets you hand
 #### example
 
 ```js
-var copySource = fs.createReadStream('./movie.mp4')
-var copyDest = fs.createWriteStream('./movie-copy.mp4')
-
-copySource.pipe(copyDest)
-
-miss.finished(copyDest, function(err) {
-  if (err) return console.log('write failed', err)
-  console.log('write success')
-})
+var request = require('request');
+ 
+miss.toJSON(request('/some/url.json'), function(err, json) {
+  if (err) throw err;
+  console.log(json);
+});
 ```
 
 
