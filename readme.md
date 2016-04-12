@@ -750,11 +750,13 @@ function handleError(err) {
 
 ### unique
 
-#####`miss.unique(stream, callback)`
+#####`miss.unique([fn])`
 
-Waits for `stream` to finish or error and then calls `cb` with `(err)`. `cb` will only be called once. `err` will be null if the stream finished without error, or else it will be populated with the error from the streams `error` event.
+Filter duplicates from a stream based on a hashing `fn(chunk)`. By default, this hashing function is:
 
-This function is useful for simplifying stream handling code as it lets you handle success or error conditions in a single code path. It's used internally `miss.pipe`.
+```js
+sha256sum(JSON.stringify(doc))
+```
 
 #### original module
 
@@ -763,15 +765,19 @@ This function is useful for simplifying stream handling code as it lets you hand
 #### example
 
 ```js
-var copySource = fs.createReadStream('./movie.mp4')
-var copyDest = fs.createWriteStream('./movie-copy.mp4')
+var stream = miss.through();
 
-copySource.pipe(copyDest)
+var hashFn = function(chunk){
+  return chunk;
+};
 
-miss.finished(copyDest, function(err) {
-  if (err) return console.log('write failed', err)
-  console.log('write success')
-})
+stream.pipe(miss.unique(hashFn)).pipe(process.stdout);
+
+stream.write("a");
+stream.write("a");
+stream.write("b");
+stream.end();
+
 ```
 
 
