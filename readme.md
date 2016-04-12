@@ -243,11 +243,11 @@ source.pipe(skip).pipe(sink)
 
 ### reduce
 
-##### `miss.reduce(accumulator)`
+##### `miss.reduce([options,] fn [,initial])`
 
-Builds a pipeline from all the transform streams passed in as arguments by piping them together and returning a single stream object that lets you write to the first stream and read from the last stream.
+Create a Reduce *instance*. Works like `Array.prototype.reduce` meaning you can specify a `fn` function that takes up to *three* arguments: fn(previous, current, index) and you can specify an `initial` value.
 
-If any of the streams in the pipeline emits an error or gets destroyed, or you destroy the stream it returns, all of the streams will be destroyed and cleaned up for you.
+This stream will only ever emit a *single* chunk. For more traditional `stream.Transform` filters or transforms, consider `miss.through` `miss.filter` or `miss.map`.
 
 #### original module
 
@@ -256,23 +256,12 @@ If any of the streams in the pipeline emits an error or gets destroyed, or you d
 #### example
 
 ```js
-var split = require('split2')
+var sum = miss.reduce({objectMode: true}, function (previous, current) { return previous + current })
 
-var toInt = miss.map(function (chunk) {
-  return parseInt(chunk.toString());
-})
-
-// use it like any other transform stream
-var fs = require('fs')
-
-var read = fs.createReadStream('strings.txt')
-var write = fs.createWriteStream('numbers.txt')
-
-miss.pipe(read, split(), toInt, write, function (err) {
-  if (err) return console.error('String processing error!', err)
-  console.log('String processed successfully')
-})
+// Then use your reduce: (e.g. source is an objectMode stream of numbers)
+source.pipe(sum).pipe(sink)
 ```
+
 ### split
 
 ##### `miss.split([matcher, mapper, options])`
