@@ -39,7 +39,7 @@ var miss = require('mississippi2')
 - [toObservable](#toobservable) *
 - [concat](#concat)
 - [unique](#unique) *
-- [toJSON](#toJSON) *
+- [toJSON](#tojson) *
 - [stringify](#stringify) *
 - [child](#child) *
 - [finished](#finished)
